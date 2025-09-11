@@ -9,22 +9,30 @@ const bot = mineflayer.createBot({
 
 function createBot () {
     bot.once('spawn', () => {
-    setInterval(() => {
-        const entity = bot.nearestEntity()
-        if (entity !== null) {
-        if (entity.type === 'player') {
-            bot.lookAt(entity.position.offset(0, 1.6, 0))
-        } else if (entity.type === 'mob') {
-            bot.lookAt(entity.position)
-        }
-        }
-    }, 50)
-    bot.chat("meow")
+        setInterval(() => {
+            const entity = bot.nearestEntity()
+            if (entity !== null) {
+            if (entity.type === 'player') {
+                bot.lookAt(entity.position.offset(0, 1.6, 0))
+            } else if (entity.type === 'mob') {
+                bot.lookAt(entity.position)
+            }
+            }
+        }, 50)
+        bot.chat("meow")
     })
 
-    // Log errors and kick reasons:
-    bot.on('kicked', createBot)
-    bot.on('error', console.log)
+    bot.on('death', () => {
+        bot.respawn()
+    });
 
+    // Log errors and kick reasons:
+    bot.on('kicked', console.log)
+    bot.on('error', console.log)
 }
 
+setInterval(() => {
+    if (!bot.player) {
+        createBot()
+    }
+}, 1000)
